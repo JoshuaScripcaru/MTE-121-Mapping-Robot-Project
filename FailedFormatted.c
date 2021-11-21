@@ -23,10 +23,10 @@ const int DISTANCE_FROM_WALL = 15;
 const int ANGLE_OFFSET = 0;
 const int ULTRASONIC_MOTOR_SPEED_SCAN = 200;
 const int ULTRASONIC_MOTOR_SPEED_DEFAULT = 40;
+const int LOOK_BACK_ANGLE = 90;
 
 //consts for movement
 const int MOVE_INTERVAL = 5;
-const int LOOK_BACK_ANGLE = 90;
 const int MOTOR_SPEED = 20;
 const int MIN_DISTANCE_TRAVEL = 50;
 
