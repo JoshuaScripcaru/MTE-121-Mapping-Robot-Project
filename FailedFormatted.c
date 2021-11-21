@@ -8,6 +8,7 @@ const tMotor ULTRASONIC_MOTOR = motorB;
 //consts for sensors
 const tSensors ULTRASONIC_SENSOR = S1;
 const tSensors GYRO_SENSOR = S4;
+const tSensors COLOR_SENSOR = S2;
 
 //consts for math
 const float DEGREES_TO_RADIANS = PI/180;
@@ -27,8 +28,7 @@ const int ULTRASONIC_MOTOR_SPEED_DEFAULT = 40;
 const int MOVE_INTERVAL = 5;
 const int LOOK_BACK_ANGLE = 90;
 const int MOTOR_SPEED = 20;
-const int MAX_DISTANCE_TRAVEL = 400;
-const int MIN_DISTANCE_TRAVEL = 20;
+const int MIN_DISTANCE_TRAVEL = 50;
 
 //consts for position tracking
 const int X_VALUE_INDEX = 0;
@@ -55,6 +55,18 @@ void calibrateGyro() //calibrates the gyro
 	SensorMode[GYRO_SENSOR] = modeEV3Gyro_Calibration;
 	wait1Msec(DELAY_TIME);
 	SensorMode[GYRO_SENSOR] = modeEV3Gyro_RateAndAngle;
+	wait1Msec(DELAY_TIME);
+}
+
+
+void calibrateColorSensor() //calibrates the gyro
+{
+	const int DELAY_TIME = 100; //amount to delay gyro during calibration steps
+
+	SensorType[COLOR_SENSOR] = sensorEV3_Color;
+	wait1Msec(DELAY_TIME);
+	SensorMode[COLOR_SENSOR] = modeEV3Color_Color;
+	wait1Msec(DELAY_TIME);
 }
 
 void calibrateUltrasonic() //calibrates the ultrasonic
@@ -109,7 +121,7 @@ void rotateToAngle(int angle, int motorPower)
 
 void getMinAngle(int & minAngle, int & minDistance)
 {
-	const int MAX_DISTANCE_POSSIBLE = 1000000;
+	const int MAX_DISTANCE_POSSIBLE = 50;
 	const float SCALE = 0.05;
 
 	minDistance = MAX_DISTANCE_POSSIBLE;
@@ -241,6 +253,7 @@ task main()
 	//calibrates sensors
 	calibrateGyro();
 	calibrateUltrasonic();
+	calibrateColorSensor();
 	nMotorEncoder[ULTRASONIC_MOTOR] = 0;
 
 	motor[ULTRASONIC_MOTOR] = ULTRASONIC_MOTOR_SPEED_DEFAULT; //moves the ultrasonic back
@@ -252,17 +265,15 @@ task main()
 
 	waitPressReleaseButton(); // Ask user to press button to start
 
-
 	int count = 0;
 	int prevMotorEncoder = 0; //used for position tracking
 	float position[3] = {0,0,0};
 
 
 	//puts a upper and low limits for how much the robot can travel
-	const int MAX_ILITERATIONS = MAX_DISTANCE_TRAVEL/MOVE_INTERVAL;
 	const int MIN_ILITERATIONS = MIN_DISTANCE_TRAVEL/MOVE_INTERVAL;
 
-	while((count < MIN_ILITERATIONS || distanceFromOrigin(position) > 10 ) && count < MAX_ILITERATIONS) //shut down, when DISTANCE_FROM_WALL from starting position
+	while(count < MIN_ILITERATIONS || (distanceFromOrigin(position) > 10 && SensorValue[COLOR_SENSOR] != (int)colorRed)) //shut down, when DISTANCE_FROM_WALL from starting position
 	{
 	int minAngle = 0;
 	int minDistance = 0;
@@ -293,8 +304,14 @@ task main()
 	count++;
 	}
 
-	if(count >= MAX_ILITERATIONS)
-	displayString(4, "Stopped due to counter. X: %d, Y: %d ", position[0], position[1]);
+	if(SensorValue[COLOR_SENSOR] == (int)colorRed)
+		displayString(4, "Stopped due to color");
+
+	if(distanceFromOrigin(position) <= 10)
+		displayString(4, "Stopped due to position");
+
+
+	displayString(5, "Stopping");
 
 
 	motor[ULTRASONIC_MOTOR] = -ULTRASONIC_MOTOR_SPEED_DEFAULT;  //rotate motor back to original position
@@ -307,8 +324,6 @@ task main()
 	putBoundaryIntoFile(); //creates and updates file of map
 
 	wait1Msec(100000);
-
-
 
 }
 
