@@ -180,9 +180,6 @@ void updatePosition(float* position, int prevMotorEncoder) //updates the positio
 
 	position[X_VALUE_INDEX] += (nMotorEncoder[RIGHT_MOTOR]-prevMotorEncoder)*(DEGREES_TO_RADIANS*WHEEL_RADIUS)*cos(position[ANGLE_VALUE_INDEX]* DEGREES_TO_RADIANS);
 	position[Y_VALUE_INDEX] -= (nMotorEncoder[RIGHT_MOTOR]-prevMotorEncoder)*(DEGREES_TO_RADIANS*WHEEL_RADIUS)*sin(position[ANGLE_VALUE_INDEX]* DEGREES_TO_RADIANS);
-
-	displayString(3, "                 ");
-	displayString(3, "x: %.2f y: %.2f", position[X_VALUE_INDEX], position[Y_VALUE_INDEX]);
 }
 
 void addBoundaryPoint(float*position, int minAngle, int minDistance)
