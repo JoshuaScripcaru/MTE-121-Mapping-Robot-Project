@@ -202,23 +202,32 @@ float distanceFromOrigin(float*position)
 }
 
 
-bool putBoundaryIntoFile() //outputs to the file
+//Outputs the array to a file
+bool putBoundaryIntoFile()
 {
 	TFileHandle fout;
-	bool didOpen = openWritePC(fout,"map.txt");
 
-	if(!didOpen)
+	bool fileOpened = openWritePC(fout,"map.txt");
+
+	if(!fileOpened)
+	{
 		return false;
+	}
 
 	for(int row = 0; row < ARRAY_SIZE; row++)
 	{
-		for(int col = 0; col < ARRAY_SIZE; col++)
+		for(int column = 0; column < ARRAY_SIZE; column++)
 		{
-			if(isBoundary[row][col])
-				writeTextPC(fout, "*"); //puts a star if there is a boundary
+			//Puts a star is there is a boundary and space if there isn't a boundary.
+			if(isBoundary[row][column])
+			{
+				writeTextPC(fout, "*");
+			}
 
 			else
-				writeTextPC(fout, " "); //puts a space if there is not a boundary
+			{
+				writeTextPC(fout, " ");
+			}
 		}
 		writeEndlPC(fout); //go to new line
 	}
