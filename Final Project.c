@@ -178,8 +178,10 @@ void updatePosition(float* position, int prevMotorEncoder) //updates the positio
 {
 	position[ANGLE_VALUE_INDEX] = getGyroDegrees(GYRO_SENSOR);
 
-	position[X_VALUE_INDEX] += (nMotorEncoder[RIGHT_MOTOR]-prevMotorEncoder)*(DEGREES_TO_RADIANS*WHEEL_RADIUS)*cos(position[ANGLE_VALUE_INDEX]* DEGREES_TO_RADIANS);
-	position[Y_VALUE_INDEX] -= (nMotorEncoder[RIGHT_MOTOR]-prevMotorEncoder)*(DEGREES_TO_RADIANS*WHEEL_RADIUS)*sin(position[ANGLE_VALUE_INDEX]* DEGREES_TO_RADIANS);
+	position[X_VALUE_INDEX] += (nMotorEncoder[RIGHT_MOTOR]-prevMotorEncoder)*(DEGREES_TO_RADIANS*WHEEL_RADIUS)
+	                           *cos(position[ANGLE_VALUE_INDEX]* DEGREES_TO_RADIANS);
+	position[Y_VALUE_INDEX] -= (nMotorEncoder[RIGHT_MOTOR]-prevMotorEncoder)*(DEGREES_TO_RADIANS*WHEEL_RADIUS)
+	                           *sin(position[ANGLE_VALUE_INDEX]* DEGREES_TO_RADIANS);
 }
 
 void addBoundaryPoint(float*position, int minAngle, int minDistance)
